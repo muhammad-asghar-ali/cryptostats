@@ -23,7 +23,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/mongoose": "nestjs/mongoose",
+    "@nestjs/mongoose": "^10.0.1",
     "@nestjs/platform-express": "^9.0.0",
     "mongoose": "^7.4.0",
     "reflect-metadata": "^0.1.13",
