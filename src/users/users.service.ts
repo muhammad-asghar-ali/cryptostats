@@ -16,15 +16,19 @@ export class UsersService {
     };
   }
 
-  private async validateUserRequest(createUser: CreateUserRequest): Promise<void> {
+  private async validateUserRequest(
+    createUser: CreateUserRequest
+  ): Promise<void> {
     const user = await this.usersRepo.findOneByEmail(createUser.email);
-    if(user) {
-        throw new BadRequestException("this email already exists");
+    if (user) {
+      throw new BadRequestException("this email already exists");
     }
-    
   }
 
-  public async createUser(createUser: CreateUserRequest): Promise<UserResponse> {
+  public async createUser(
+    createUser: CreateUserRequest
+  ): Promise<UserResponse> {
+    await this.validateUserRequest(createUser);
     const user = await this.usersRepo.insertOne({
       ...createUser,
       password: await bcrypt.hash(createUser.password, 12),
