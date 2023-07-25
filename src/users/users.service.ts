@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import bcrypt from "bcrypt";
 import { User } from "src/models/user.model";
 import { CreateUserRequest } from "./dto/request/create-user-request.dto";
@@ -33,6 +38,24 @@ export class UsersService {
       ...createUser,
       password: await bcrypt.hash(createUser.password, 12),
     });
+
+    return this.buildResponse(user);
+  }
+
+  public async validateUser(
+    email: string,
+    password: string
+  ): Promise<UserResponse> {
+    const user = await this.usersRepo.findOneByEmail(email);
+    if (!user) {
+      throw new NotFoundException("user not found");
+    }
+
+    const passwordIsValid = await bcrypt.compare(password, user.password);
+
+    if (!passwordIsValid) {
+      throw new UnauthorizedException("Credendial are invalid");
+    }
 
     return this.buildResponse(user);
   }
