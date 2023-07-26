@@ -59,4 +59,13 @@ export class UsersService {
 
     return this.buildResponse(user);
   }
+
+  public async getUserById(userId: string): Promise<UserResponse> {
+    const user = await this.usersRepo.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException("user not found");
+    }
+
+    return this.buildResponse(user);
+  }
 }

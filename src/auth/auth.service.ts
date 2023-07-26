@@ -3,10 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Response } from "express";
 import { UserResponse } from "src/users";
-
-interface TokenPayload {
-  userId: string;
-}
+import { TokenPayload } from "./interfaces";
 
 @Injectable()
 export class AuthService {
