@@ -3,12 +3,12 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from "@nestjs/common";
-import bcrypt from "bcrypt";
-import { User } from "src/models/user.model";
-import { CreateUserRequest } from "./dto/request/create-user-request.dto";
-import { UserResponse } from "./dto/response/user.response.dto";
-import { UsersRepository } from "./users.repository";
+} from '@nestjs/common';
+import bcrypt from 'bcrypt';
+import { User } from 'src/models/user.model';
+import { CreateUserRequest } from './dto/request/create-user-request.dto';
+import { UserResponse } from './dto/response/user.response.dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
@@ -26,7 +26,7 @@ export class UsersService {
   ): Promise<void> {
     const user = await this.usersRepo.findOneByEmail(createUser.email);
     if (user) {
-      throw new BadRequestException("this email already exists");
+      throw new BadRequestException('this email already exists');
     }
   }
 
@@ -42,19 +42,31 @@ export class UsersService {
     return this.buildResponse(user);
   }
 
+  public async updateUser(
+    userId: string,
+    data: Partial<User>
+  ): Promise<UserResponse> {
+    const user = await this.usersRepo.updateOne(userId, data);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return this.buildResponse(user);
+  }
+
   public async validateUser(
     email: string,
     password: string
   ): Promise<UserResponse> {
     const user = await this.usersRepo.findOneByEmail(email);
     if (!user) {
-      throw new NotFoundException("user not found");
+      throw new NotFoundException('user not found');
     }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
 
     if (!passwordIsValid) {
-      throw new UnauthorizedException("Credendial are invalid");
+      throw new UnauthorizedException('Credendial are invalid');
     }
 
     return this.buildResponse(user);
@@ -63,7 +75,7 @@ export class UsersService {
   public async getUserById(userId: string): Promise<UserResponse> {
     const user = await this.usersRepo.findOneById(userId);
     if (!user) {
-      throw new NotFoundException("user not found");
+      throw new NotFoundException('user not found');
     }
 
     return this.buildResponse(user);
