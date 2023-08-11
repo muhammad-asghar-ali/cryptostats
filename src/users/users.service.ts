@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import bcrypt from 'bcrypt';
+import { Coinbase } from 'src/models/coinbase.model';
 import { User } from 'src/models/user.model';
 import { CreateUserRequest } from './dto/request/create-user-request.dto';
 import { UserResponse } from './dto/response/user.response.dto';
@@ -18,6 +19,7 @@ export class UsersService {
     return {
       _id: user._id.toHexString(),
       email: user.email,
+      isCoinbaseAuthorized: !!user.coinbase,
     };
   }
 
@@ -79,5 +81,18 @@ export class UsersService {
     }
 
     return this.buildResponse(user);
+  }
+
+  public async getCoinbaseAuth(userId: string): Promise<Coinbase> {
+    const user = await this.usersRepo.findOneById(userId);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    if (!user.coinbase) {
+      throw new UnauthorizedException('user has not authorized coinbase');
+    }
+    return user.coinbase;
   }
 }
